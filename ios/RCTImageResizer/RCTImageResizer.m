@@ -32,7 +32,7 @@ bool saveImage(NSString * fullPath, UIImage * image, NSString * format, float qu
     return [fileManager createFileAtPath:fullPath contents:data attributes:nil];
 }
 
-NSString * generateFilePath(NSString * ext, NSString * outputPath)
+NSString * generateFilePath(NSString * ext, NSString * outputPath, NSString * imageName)
 {
     NSString* directory;
 
@@ -40,7 +40,7 @@ NSString * generateFilePath(NSString * ext, NSString * outputPath)
         NSArray* paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
         directory = [paths firstObject];
     } else {
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
         NSString *documentsDirectory = [paths objectAtIndex:0];
         if ([outputPath hasPrefix:documentsDirectory]) {
             directory = outputPath;
@@ -57,7 +57,7 @@ NSString * generateFilePath(NSString * ext, NSString * outputPath)
     }
 
     NSString* name = [[NSUUID UUID] UUIDString];
-    NSString* fullName = [NSString stringWithFormat:@"%@.%@", name, ext];
+    NSString* fullName = [NSString stringWithFormat:@"%@.%@", imageName, ext];
     NSString* fullPath = [directory stringByAppendingPathComponent:fullName];
 
     return fullPath;
@@ -102,6 +102,7 @@ RCT_EXPORT_METHOD(createResizedImage:(NSString *)path
                   format:(NSString *)format
                   quality:(float)quality
                   rotation:(float)rotation
+                  imageName:(NSString *)imageName
                   outputPath:(NSString *)outputPath
                   callback:(RCTResponseSenderBlock)callback)
 {
@@ -116,7 +117,7 @@ RCT_EXPORT_METHOD(createResizedImage:(NSString *)path
     
     NSString* fullPath;
     @try {
-        fullPath = generateFilePath(extension, outputPath);
+        fullPath = generateFilePath(extension, outputPath , imageName);
     } @catch (NSException *exception) {
         callback(@[@"Invalid output path.", @""]);
         return;
