@@ -57,7 +57,7 @@ A basic, sample app is available in [the `example` folder](https://github.com/ba
 
 ## API
 
-### `promise createResizedImage(path, maxWidth, maxHeight, compressFormat, quality, rotation = 0, outputPath)`
+### `promise createResizedImage(path, maxWidth, maxHeight, compressFormat, quality, rotation = 0, imageName, outputPath)`
 
 The promise resolves with an object containing: `path`, `uri`, `name` and `size` of the new file. The URI can be used directly as the `source` of an [`<Image>`](https://facebook.github.io/react-native/docs/image.html) component.
 
