@@ -10,6 +10,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -82,7 +83,7 @@ public class ImageResizer {
             throw new IOException("The bitmap couldn't be resized");
         }
 
-        File newFile = new File(saveDirectory, fileName + "." + compressFormat.name());
+        File newFile = new File(saveDirectory, fileName + "." + compressFormat.name().toString().toLowerCase());
         if(!newFile.createNewFile()) {
             throw new IOException("The file already exists");
         }
@@ -268,7 +269,7 @@ public class ImageResizer {
      */
     public static File createResizedImage(Context context, Uri imageUri, int newWidth,
                                             int newHeight, Bitmap.CompressFormat compressFormat,
-                                            int quality, int rotation, String outputPath) throws IOException  {
+                                            int quality, int rotation, String imageName, String outputPath) throws IOException  {
         Bitmap sourceImage = null;
         String imageUriScheme = imageUri.getScheme();
         if (imageUriScheme == null || imageUriScheme.equalsIgnoreCase(SCHEME_FILE) || imageUriScheme.equalsIgnoreCase(SCHEME_CONTENT)) {
@@ -300,12 +301,15 @@ public class ImageResizer {
         // Save the resulting image
         File path = context.getCacheDir();
         if (outputPath != null) {
-            path = new File(outputPath);
+           //path = new File(outputPath);
+           path =  new File(context.getCacheDir(), outputPath);
         }
 
-        File newFile = ImageResizer.saveImage(rotatedImage, path,
-                Long.toString(new Date().getTime()), compressFormat, quality);
+       // Log.d("MyTagGoesHere", path.toString());
 
+       // File newFile = ImageResizer.saveImage(rotatedImage, path,
+              //  Long.toString(new Date().getTime()), compressFormat, quality);
+        File newFile = ImageResizer.saveImage(rotatedImage, path, imageName, compressFormat, quality);
         // Clean up remaining image
         rotatedImage.recycle();
 
